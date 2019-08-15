@@ -14,8 +14,6 @@ vnoremap kj <esc>
 inoremap Kj <esc>
 vnoremap Kj <esc>
 
-" Moves line down "
-nnoremap _ Vdp
 " Moves line up "
 nnoremap ~ Vd<esc>kP
 " Moves line down
@@ -30,7 +28,6 @@ nnoremap <leader>c/ 0i//<esc>
 " Inserts vim comment "
 nnoremap <leader>c" 0i" <esc>
 
-
 " Fast scroll "
 nnoremap K <c-u>
 nnoremap J <c-d>
@@ -42,3 +39,13 @@ nnoremap <buffer> <leader>ep :exec '!python' shellescape(@%, 1)<cr>
 let NERDTreeMapOpenInTab='<ENTER>'
 let NERDTreeMapOpenInTab='\r'
 
+" Tab complete for python
+" autocmd FileType python let b:vcm_tab_complete = 'omni'
+
+" Bullets.vim
+let g:bullets_enabled_file_types = [
+    \ 'markdown',
+    \ 'text',
+    \ 'gitcommit',
+    \ 'scratch'
+    \]

@@ -3,12 +3,53 @@ if exists("g:loaded_nerdtree_autoload")
 endif
 let g:loaded_nerdtree_autoload = 1
 
-function! nerdtree#version()
-    return '5.0.0'
+let s:rootNERDTreePath = resolve(expand("<sfile>:p:h:h"))
+function! nerdtree#version(...)
+    let l:changelog = readfile(join([s:rootNERDTreePath, "CHANGELOG.md"], nerdtree#slash()))
+    let l:text = 'Unknown'
+    let l:line = 0
+    while l:line <= len(l:changelog)
+        if l:changelog[l:line] =~ '\d\+\.\d\+'
+            let l:text = substitute(l:changelog[l:line], '.*\(\d\+.\d\+\).*', '\1', '')
+            let l:text .= substitute(l:changelog[l:line+1], '^.\{-}\(\.\d\+\).\{-}:\(.*\)', a:0>0 ? '\1:\2' : '\1', '')
+            break
+        endif
+        let l:line += 1
+    endwhile
+    return l:text
 endfunction
 
 " SECTION: General Functions {{{1
 "============================================================
+
+"FUNCTION: nerdtree#redraw(bang)
+" Redraws the screen (Neovim uses the mode statement). If bang is TRUE, use
+" redraw! instead of redraw.
+function! nerdtree#redraw(bang)
+    if has('nvim')
+        mode
+    else
+        if a:bang
+            redraw!
+        else
+            redraw
+        endif
+    endif
+endfunction
+
+"FUNCTION: nerdtree#slash()
+" Returns the directory separator based on OS and &shellslash
+function! nerdtree#slash()
+    if nerdtree#runningWindows()
+        if exists('+shellslash') && &shellslash
+            return '/'
+        endif
+
+        return '\'
+    endif
+
+    return '/'
+endfunction
 
 "FUNCTION: nerdtree#and(x,y) {{{2
 " Implements and() function for Vim <= 7.2
@@ -191,7 +232,7 @@ endfunction
 "Args:
 "msg: the message to echo
 function! nerdtree#echo(msg)
-    redraw
+    call nerdtree#redraw(0)
     echomsg empty(a:msg) ? "" : ("NERDTree: " . a:msg)
 endfunction
 
